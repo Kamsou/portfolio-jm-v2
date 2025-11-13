@@ -6,11 +6,6 @@
     <ul>
       <li>
         <NuxtLink to="/">
-          home
-        </NuxtLink>
-      </li>
-      <li>
-        <NuxtLink to="/work">
           work
         </NuxtLink>
       </li>

@@ -59,7 +59,7 @@ const visibleSlide = ref(0)
 const slidesLen = computed(() => gallery.value.length)
 
 const removeCompress = (image: any) => {
-  return asImageSrc(image, { auto: undefined })
+  return asImageSrc(image, { auto: undefined }) ?? ''
 }
 
 const keycodeGallery = (event: KeyboardEvent) => {

@@ -1,32 +1,44 @@
 <script setup lang="ts">
-import { asImageSrc } from '@prismicio/client'
-
 interface Props {
   album: any
 }
 
 const props = defineProps<Props>()
 
-const isOpen = ref(false)
+const { toggleAccordion: toggle, isOpen: checkIsOpen } = useAccordion()
+const { removeCompress } = usePrismicImage()
 
-const gallery = computed(() => props.album?.data?.body?.[0]?.items || [])
+const body = computed(() => props.album?.data?.body || [])
 
-const toggleAccordion = () => {
-  isOpen.value = !isOpen.value
+const isOpen = computed(() => checkIsOpen(props.album.id))
+
+const accordionRef = ref<HTMLElement | null>(null)
+
+async function toggleAccordion() {
+  const wasOpen = isOpen.value
+  await toggle(props.album.id)
+
+  // Si on ouvre l'accordéon, scroller vers son début
+  if (!wasOpen) {
+    setTimeout(() => {
+      if (accordionRef.value) {
+        const headerElement = accordionRef.value.querySelector('.accordion-header')
+        if (headerElement) {
+          headerElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }
+    }, 100)
+  }
 }
 
-const removeCompress = (image: any) => {
-  return asImageSrc(image, { auto: undefined })
-}
-
-const formatYear = (date: string) => {
+function formatYear(date: string) {
   if (!date) return ''
   return new Date(date).getFullYear()
 }
 </script>
 
 <template>
-  <div class="accordion-project">
+  <div ref="accordionRef" class="accordion-project">
     <button
       class="accordion-header"
       @click="toggleAccordion"
@@ -41,20 +53,37 @@ const formatYear = (date: string) => {
 
     <Transition name="accordion">
       <div v-show="isOpen" class="accordion-content">
-        <div class="project-images">
-          <div
-            v-for="(slide, index) in gallery"
-            :key="index"
-            class="project-image-wrapper"
-          >
-            <img
-              :src="removeCompress(slide.picture)"
-              :alt="slide.picture?.alt || ''"
-              class="project-image"
-            >
-            <p v-if="slide.picture?.alt" class="image-caption">
-              {{ slide.picture.alt }}
-            </p>
+        <div class="project-body">
+          <div v-for="(slice, sliceIndex) in body" :key="sliceIndex" class="project-slice">
+            <!-- Text slice -->
+            <div v-if="slice.slice_type === 'text'" class="text-content">
+              <PrismicRichText :field="slice.primary.text" />
+            </div>
+
+            <!-- Image gallery slice -->
+            <div v-else-if="slice.slice_type === 'image_gallery'" class="project-images">
+              <ProjectImage
+                v-for="(slide, index) in slice.items"
+                :key="index"
+                :image="slide.picture"
+                :image-src="removeCompress(slide.picture)"
+              />
+            </div>
+
+            <!-- Slideshow slice -->
+            <div v-else-if="slice.slice_type === 'slideshow'" class="slideshow-wrapper">
+              <CarouselSlideshow :images="slice.items" />
+            </div>
+
+            <!-- Fallback: old format (default gallery) -->
+            <div v-else class="project-images">
+              <ProjectImage
+                v-for="(slide, index) in slice.items"
+                :key="index"
+                :image="slide.picture"
+                :image-src="removeCompress(slide.picture)"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -148,7 +177,7 @@ const formatYear = (date: string) => {
   max-height: 10000px;
 }
 
-.project-images {
+.project-body {
   padding-bottom: 40px;
 
   @media (max-width: $breakpoint-tablet) {
@@ -156,11 +185,11 @@ const formatYear = (date: string) => {
   }
 }
 
-.project-image-wrapper {
-  margin-bottom: 30px;
+.project-slice {
+  margin-bottom: 40px;
 
   @media (max-width: $breakpoint-tablet) {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
   }
 
   &:last-child {
@@ -168,25 +197,19 @@ const formatYear = (date: string) => {
   }
 }
 
-.project-image {
-  width: 100%;
-  max-width: 60vw;
-  height: auto;
-  display: block;
+.text-content {
+  max-width: 40vw;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #222222;
 
   @media (max-width: $breakpoint-tablet) {
     max-width: 90vw;
+    font-size: 13px;
   }
 }
 
-.image-caption {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #666666;
-  text-align: right;
-
-  @media (max-width: $breakpoint-tablet) {
-    font-size: 11px;
-  }
+.slideshow-wrapper {
+  margin: 0;
 }
 </style>
