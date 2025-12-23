@@ -4,6 +4,7 @@
       :src="imageSrc"
       :alt="image?.alt ?? ''"
       class="project-image"
+      loading="lazy"
     >
     <p v-if="image?.alt" class="image-caption">
       {{ image.alt }}

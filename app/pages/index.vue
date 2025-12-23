@@ -20,6 +20,14 @@ const albums = computed(() => data.value || [])
 useHead({
   title: 'Jean Marquès'
 })
+
+useSeoMeta({
+  description: 'Portfolio de Jean Marquès, photographe',
+  ogTitle: 'Jean Marquès',
+  ogDescription: 'Portfolio de Jean Marquès, photographe',
+  ogType: 'website',
+  ogSiteName: 'Jean Marquès'
+})
 </script>
 
 <template>

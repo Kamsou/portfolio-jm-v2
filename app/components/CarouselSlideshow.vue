@@ -5,11 +5,17 @@
         v-if="currentImage"
         class="carousel-slide"
         @click="nextSlide"
+        aria-label="Cliquer pour l'image suivante"
+        role="button"
       >
+        <div v-if="isLoading" class="loading-indicator">Chargement...</div>
         <img
           :src="removeCompress(currentImage.picture)"
           :alt="currentImage.picture?.alt ?? ''"
           class="carousel-image"
+          :class="{ 'is-loading': isLoading }"
+          loading="lazy"
+          @load="isLoading = false"
         >
       </div>
     </div>
@@ -34,10 +40,12 @@ const props = defineProps<Props>()
 const { removeCompress } = usePrismicImage()
 
 const currentSlide = ref(0)
+const isLoading = ref(true)
 
 const currentImage = computed(() => props.images[currentSlide.value])
 
 function nextSlide() {
+  isLoading.value = true
   currentSlide.value = (currentSlide.value + 1) % props.images.length
 }
 </script>
@@ -57,6 +65,16 @@ function nextSlide() {
 
 .carousel-slide {
   cursor: pointer;
+  position: relative;
+}
+
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  color: #666666;
 }
 
 .carousel-image {
@@ -64,6 +82,11 @@ function nextSlide() {
   max-width: 40vw;
   height: auto;
   display: block;
+  transition: opacity 0.2s ease;
+
+  &.is-loading {
+    opacity: 0.3;
+  }
 
   @media (max-width: $breakpoint-tablet) {
     max-width: 90vw;

@@ -18,11 +18,11 @@
               </div>
 
               <div class="element-pagination">
-                <a class="prev" @click="left">
+                <a class="prev" role="button" aria-label="Image précédente" @click="left">
                   <p>&lt;</p>
                 </a>
 
-                <a class="next" @click="nextSlide">
+                <a class="next" role="button" aria-label="Image suivante" @click="nextSlide">
                   <p>&gt;</p>
                 </a>
               </div>
@@ -88,8 +88,20 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', keycodeGallery)
 })
 
+const projectTitle = computed(() => doc.value?.title?.[0]?.text || 'Gallery')
+const firstImage = computed(() => gallery.value[0]?.picture?.url || '')
+
 useHead({
-  title: 'Jean Marquès - Gallery'
+  title: computed(() => `Jean Marquès - ${projectTitle.value}`)
+})
+
+useSeoMeta({
+  description: computed(() => `${projectTitle.value} - Portfolio de Jean Marquès`),
+  ogTitle: computed(() => `Jean Marquès - ${projectTitle.value}`),
+  ogDescription: computed(() => `${projectTitle.value} - Portfolio de Jean Marquès`),
+  ogType: 'website',
+  ogImage: firstImage,
+  ogSiteName: 'Jean Marquès'
 })
 </script>
 
