@@ -4,7 +4,7 @@
       <CarouselSlide
         v-for="(slide, index) in gallery"
         :key="index"
-        :index="index"
+        :index="Number(index)"
         :visible-slide="visibleSlide"
       >
         <div class="fit">
@@ -14,7 +14,7 @@
           <div class="elements-carousel">
             <div class="pagination-left">
               <div class="element-number">
-                <span>{{ index + 1 }} - {{ slidesLen }}</span>
+                <span>{{ Number(index) + 1 }} - {{ slidesLen }}</span>
               </div>
 
               <div class="element-pagination">

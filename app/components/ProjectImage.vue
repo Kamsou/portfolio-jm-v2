@@ -48,7 +48,7 @@ defineProps<Props>()
   margin-top: 8px;
   font-size: 12px;
   color: #666666;
-  text-align: right;
+  text-align: left;
 
   @media (max-width: $breakpoint-tablet) {
     font-size: 11px;

@@ -14,11 +14,9 @@
       </div>
     </div>
     <div class="carousel-controls">
-      <div class="carousel-caption">
-        <p v-if="currentImage?.picture?.alt" class="image-caption">
-          {{ currentImage.picture.alt }}
-        </p>
-      </div>
+      <p v-if="currentImage?.picture?.alt" class="image-caption">
+        {{ currentImage.picture.alt }}
+      </p>
       <div class="carousel-counter">
         {{ currentSlide + 1 }} / {{ images.length }}
       </div>
@@ -55,12 +53,10 @@ function nextSlide() {
 
 .carousel-container {
   position: relative;
-  width: 100%;
 }
 
 .carousel-slide {
   cursor: pointer;
-  width: 100%;
 }
 
 .carousel-image {
@@ -79,17 +75,17 @@ function nextSlide() {
   justify-content: space-between;
   align-items: flex-start;
   margin-top: 8px;
-  gap: 20px;
-}
+  max-width: 40vw;
 
-.carousel-caption {
-  flex: 1;
+  @media (max-width: $breakpoint-tablet) {
+    max-width: 90vw;
+  }
 }
 
 .image-caption {
   font-size: 12px;
   color: #666666;
-  text-align: right;
+  text-align: left;
   margin: 0;
 
   @media (max-width: $breakpoint-tablet) {
