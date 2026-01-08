@@ -95,7 +95,7 @@ function nextSlide() {
 
 .carousel-controls {
   display: flex;
-  justify-content: space-between;
+  gap: 15px;
   align-items: flex-start;
   margin-top: 8px;
   max-width: 40vw;

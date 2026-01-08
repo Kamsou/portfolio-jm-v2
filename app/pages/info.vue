@@ -1,8 +1,4 @@
-<template>
-  <div class="info" v-if="info">
-    <PrismicRichText :field="info.paragraphe" />
-  </div>
-</template>
+
 
 <script setup lang="ts">
 const { client } = usePrismic()
@@ -24,6 +20,12 @@ useHead({
 })
 </script>
 
+<template>
+  <div class="info" v-if="info">
+    <PrismicRichText :field="info.paragraphe" />
+  </div>
+</template>
+
 <style lang="scss">
 .info {
   display: block;
@@ -34,6 +36,8 @@ useHead({
   }
 
   p {
+    margin-bottom: 0.25em;
+
     a {
       text-decoration: none;
       color: #000;
@@ -43,6 +47,13 @@ useHead({
       @media (max-width: $breakpoint-tablet) {
         width: 100%;
       }
+    }
+
+    em {
+      display: block;
+      margin-top: 1em;
+      margin-bottom: 0.1em;
+      font-style: normal;
     }
   }
 }

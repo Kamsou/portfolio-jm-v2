@@ -18,7 +18,6 @@ async function toggleAccordion() {
   const wasOpen = isOpen.value
   await toggle(props.album.id)
 
-  // Si on ouvre l'accordéon, scroller vers son début
   if (!wasOpen) {
     setTimeout(() => {
       if (accordionRef.value) {
@@ -126,13 +125,9 @@ function formatYear(date: string) {
 
   .project-info {
     display: flex;
-    gap: 30px;
+    flex-direction: column;
+    gap: 2px;
     align-items: baseline;
-
-    @media (max-width: $breakpoint-tablet) {
-      gap: 15px;
-      flex-direction: column;
-    }
 
     .project-title {
       font-weight: normal;

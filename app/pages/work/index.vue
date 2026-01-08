@@ -5,6 +5,7 @@ const { data } = await useAsyncData('albums', async () => {
   try {
     const response = await client.getAllByType('album', {
       orderings: [
+        { field: 'my.album.order', direction: 'asc' },
         { field: 'document.first_publication_date', direction: 'desc' }
       ]
     })
