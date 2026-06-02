@@ -6,7 +6,6 @@ interface Props {
 const props = defineProps<Props>()
 
 const { toggleAccordion: toggle, isOpen: checkIsOpen } = useAccordion()
-const { removeCompress } = usePrismicImage()
 
 const body = computed(() => props.album?.data?.body || [])
 
@@ -32,7 +31,10 @@ async function toggleAccordion() {
 
 function formatYear(date: string) {
   if (!date) return ''
-  return new Date(date).getFullYear()
+  // Champ texte libre (ex: "2018-2025", "2024", "2018 – en cours") : affiché tel quel.
+  // Ancienne valeur date ISO (ex: "2018-03-15") : on n'en garde que l'année.
+  const isoMatch = /^\d{4}-\d{2}-\d{2}$/.test(date)
+  return isoMatch ? new Date(date).getFullYear() : date
 }
 </script>
 
@@ -45,7 +47,7 @@ function formatYear(date: string) {
     >
       <span class="project-info">
         <span class="project-title">{{ album.data.title?.[0]?.text }}</span>
-        <span class="project-year">{{ formatYear(album.first_publication_date) }}</span>
+        <span class="project-year">{{ formatYear(album.data.date || album.first_publication_date) }}</span>
       </span>
       <span class="accordion-icon">{{ isOpen ? '−' : '+' }}</span>
     </button>
@@ -65,7 +67,6 @@ function formatYear(date: string) {
                 v-for="(slide, index) in slice.items"
                 :key="index"
                 :image="slide.picture"
-                :image-src="removeCompress(slide.picture)"
               />
             </div>
 
@@ -80,7 +81,6 @@ function formatYear(date: string) {
                 v-for="(slide, index) in slice.items"
                 :key="index"
                 :image="slide.picture"
-                :image-src="removeCompress(slide.picture)"
               />
             </div>
           </div>

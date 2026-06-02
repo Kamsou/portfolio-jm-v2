@@ -10,11 +10,14 @@
       >
         <div v-if="isLoading" class="loading-indicator">Chargement...</div>
         <img
-          :src="removeCompress(currentImage.picture)"
+          :src="srcSet.src"
+          :srcset="srcSet.srcset"
+          :sizes="imageSizes"
           :alt="currentImage.picture?.alt ?? ''"
           class="carousel-image"
           :class="{ 'is-loading': isLoading }"
           loading="lazy"
+          decoding="async"
           @load="isLoading = false"
         >
       </div>
@@ -37,12 +40,13 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { removeCompress } = usePrismicImage()
+const { imageSrcSet, imageSizes } = usePrismicImage()
 
 const currentSlide = ref(0)
 const isLoading = ref(true)
 
 const currentImage = computed(() => props.images[currentSlide.value])
+const srcSet = computed(() => imageSrcSet(currentImage.value?.picture))
 
 function nextSlide() {
   isLoading.value = true

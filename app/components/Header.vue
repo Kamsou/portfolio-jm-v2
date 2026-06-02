@@ -16,7 +16,7 @@
       </li>
       <li>
         <a href="https://www.instagram.com/jeanmarques.jm/" target="_blank" rel="noopener">
-          <img class="logo_instagram" src="/instagram.png" alt="Instagram">
+          <img class="logo_instagram" src="/instagram.png" alt="Instagram" width="13" height="13">
         </a>
       </li>
     </ul>

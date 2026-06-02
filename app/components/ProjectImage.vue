@@ -1,10 +1,13 @@
 <template>
   <div class="project-image-wrapper">
     <img
-      :src="imageSrc"
+      :src="srcSet.src"
+      :srcset="srcSet.srcset"
+      :sizes="imageSizes"
       :alt="image?.alt ?? ''"
       class="project-image"
       loading="lazy"
+      decoding="async"
     >
     <p v-if="image?.alt" class="image-caption">
       {{ image.alt }}
@@ -15,10 +18,13 @@
 <script setup lang="ts">
 interface Props {
   image: any
-  imageSrc: string
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const { imageSrcSet, imageSizes } = usePrismicImage()
+
+const srcSet = computed(() => imageSrcSet(props.image))
 </script>
 
 <style lang="scss" scoped>

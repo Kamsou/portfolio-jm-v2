@@ -2,13 +2,20 @@
   <article v-if="gallery">
     <Carousel>
       <CarouselSlide
-        v-for="(slide, index) in gallery"
+        v-for="(slide, index) in slides"
         :key="index"
         :index="Number(index)"
         :visible-slide="visibleSlide"
       >
         <div class="fit">
-          <img :src="removeCompress(slide.picture)" :alt="slide.picture?.alt || ''">
+          <img
+            :src="slide.src"
+            :srcset="slide.srcset"
+            :sizes="imageSizes"
+            :alt="slide.alt"
+            :loading="index === 0 ? 'eager' : 'lazy'"
+            decoding="async"
+          >
           <div class="clickable-area left" @click="left" />
           <div class="clickable-area right" @click="nextSlide" />
           <div class="elements-carousel">
@@ -28,7 +35,7 @@
               </div>
             </div>
 
-            <span class="title">{{ slide.picture?.alt }}</span>
+            <span class="title">{{ slide.alt }}</span>
           </div>
         </div>
       </CarouselSlide>
@@ -37,10 +44,9 @@
 </template>
 
 <script setup lang="ts">
-import { asImageSrc } from '@prismicio/client'
-
 const route = useRoute()
 const { client } = usePrismic()
+const { imageSrcSet, imageSizes } = usePrismicImage()
 
 const { data } = await useAsyncData(`album-${route.params.uid}`, async () => {
   try {
@@ -58,9 +64,13 @@ const visibleSlide = ref(0)
 
 const slidesLen = computed(() => gallery.value.length)
 
-const removeCompress = (image: any) => {
-  return asImageSrc(image, { auto: undefined }) ?? ''
-}
+// Pré-calcule le srcset responsive de chaque slide (évite de recalculer dans le template)
+const slides = computed(() =>
+  gallery.value.map((slide: any) => ({
+    alt: slide.picture?.alt || '',
+    ...imageSrcSet(slide.picture)
+  }))
+)
 
 const keycodeGallery = (event: KeyboardEvent) => {
   if (event.key === 'ArrowRight') {
