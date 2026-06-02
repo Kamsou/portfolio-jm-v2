@@ -46,7 +46,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const { client } = usePrismic()
-const { imageSrcSet, imageSizes } = usePrismicImage()
+const { imageSrcSet, imageSrc, imageSizes } = usePrismicImage()
 
 const { data } = await useAsyncData(`album-${route.params.uid}`, async () => {
   try {
@@ -98,21 +98,31 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', keycodeGallery)
 })
 
-const projectTitle = computed(() => doc.value?.title?.[0]?.text || 'Gallery')
-const firstImage = computed(() => gallery.value[0]?.picture?.url || '')
+const projectTitle = computed(() => doc.value?.title?.[0]?.text || 'Projet')
+const { public: { siteUrl } } = useRuntimeConfig()
 
-useHead({
-  title: computed(() => `Jean Marquès - ${projectTitle.value}`)
-})
+const ogImage = computed(() =>
+  gallery.value[0]?.picture ? imageSrc(gallery.value[0].picture, 1200) : ''
+)
 
-useSeoMeta({
-  description: computed(() => `${projectTitle.value} - Portfolio de Jean Marquès`),
-  ogTitle: computed(() => `Jean Marquès - ${projectTitle.value}`),
-  ogDescription: computed(() => `${projectTitle.value} - Portfolio de Jean Marquès`),
-  ogType: 'website',
-  ogImage: firstImage,
-  ogSiteName: 'Jean Marquès'
-})
+const jsonLd = computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  name: projectTitle.value,
+  url: `${siteUrl}/work/${route.params.uid}`,
+  inLanguage: 'fr-FR',
+  author: { '@type': 'Person', name: 'Jean Marquès', jobTitle: 'Photographe' },
+  image: slides.value.map((s: any) => s.src).filter(Boolean)
+}))
+
+useSeo(() => ({
+  title: `${projectTitle.value} — Jean Marquès`,
+  description: `${projectTitle.value} : série photographique de Jean Marquès.`,
+  path: `/work/${route.params.uid}`,
+  type: 'article',
+  image: ogImage.value,
+  jsonLd: jsonLd.value
+}))
 </script>
 
 <style lang="scss" scoped>

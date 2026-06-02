@@ -17,16 +17,36 @@ const { data } = await useAsyncData('albums', async () => {
 
 const albums = computed(() => data.value || [])
 
-useHead({
-  title: 'Jean Marquès'
-})
+const { public: { siteUrl } } = useRuntimeConfig()
 
-useSeoMeta({
-  description: 'Portfolio de Jean Marquès, photographe',
-  ogTitle: 'Jean Marquès',
-  ogDescription: 'Portfolio de Jean Marquès, photographe',
-  ogType: 'website',
-  ogSiteName: 'Jean Marquès'
+const description =
+  'Portfolio du photographe Jean Marquès : séries, projets et collaborations en photographie.'
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Jean Marquès',
+    jobTitle: 'Photographe',
+    url: siteUrl,
+    sameAs: ['https://www.instagram.com/jeanmarques.jm/']
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Jean Marquès',
+    url: siteUrl,
+    inLanguage: 'fr-FR',
+    author: { '@type': 'Person', name: 'Jean Marquès' }
+  }
+]
+
+useSeo({
+  title: 'Jean Marquès — Photographe',
+  description,
+  path: '/',
+  type: 'website',
+  jsonLd
 })
 </script>
 
